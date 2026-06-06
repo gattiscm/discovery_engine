@@ -155,25 +155,27 @@ class DiscoveryModel:
                 **self.encoder_kwargs
             )
 
-        elif self.encoder_type == "timeseries":
-
+        elif self.encoder_type == "timeseries":           #### Placeholder for time-series expansion
+            '''
             from features.time_series_extractor import (
                 TimeSeriesExtractor
             )
 
             self.extractor = TimeSeriesExtractor(
                 **self.encoder_kwargs
-            )
+            )'''
+            raise NotImplementedError('This is a placeholder for future development: time-series data.')
 
-        elif self.encoder_type == "shape":
-
+        elif self.encoder_type == "shape":                #### Placeholder for shapes expansion
+            '''
             from features.shape_extractor import (
                 ShapeExtractor
             )
 
             self.extractor = ShapeExtractor(
                 **self.encoder_kwargs
-            )
+            )'''
+            raise NotImplementedError('This is a placeholder for future development: shape data.')
 
         else:
 
