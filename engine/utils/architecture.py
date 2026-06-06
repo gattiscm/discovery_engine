@@ -1,28 +1,26 @@
-import math
-
-
-def next_power_two_latent(
-        input_dims,
-        multiplier=2
-):
-
-    target = (
-        input_dims *
-        multiplier
-    )
-
-    latent = 1
-
-    while latent <= target:
-        latent *= 2
-
-    return latent
+# ######################################################################
+# Author: Cameron M. Gattis
+# Created: 2026-06-06
+# Updated: New.
+# Purpose: Generator to calculate the number of latent units to build
+#          for an automatic model.
+# ######################################################################
 
 def auto_latent_units(
         input_dim,
         multiplier=2,
         max_units=1024
 ):
+    '''
+        Utilizes dimensional number to calculate an automated number
+        of latent units for latent mapping.
+
+        @params input_dim : int
+                multiplier : KWARG, int
+                max_units : KWaRG, int
+
+        @return calculated : int
+    '''
 
     target = input_dim * multiplier
 
@@ -31,7 +29,4 @@ def auto_latent_units(
     while units < target:
         units *= 2
 
-    return min(
-        units,
-        max_units
-    )
+    return min(units,max_units)
