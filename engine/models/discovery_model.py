@@ -57,13 +57,6 @@ class DiscoveryModel:
         self.novelty_mode = novelty_mode
 
         self.novelty_threshold = novelty_threshold
-        from engine.novel_memory import (
-            NovelMemory
-        )
-
-        self.novel_memory = (
-            NovelMemory()
-        )
 
     def _score_latent(self, z):
         scores = {}
