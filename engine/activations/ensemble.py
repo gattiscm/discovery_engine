@@ -1,59 +1,64 @@
+# ######################################################################
+# Author: Cameron M. Gattis
+# Created: 2026-06-13
+# Updated: New.
+# Purpose: Combines multiple activation functions into a
+#          weighted ensemble activation.
+# ######################################################################
+
 import numpy as np
 
 from .base import BaseActivation
 
 
-class EnsembleActivation(
-        BaseActivation
-):
+class EnsembleActivation(BaseActivation):
+    # ##################################################################
+    # Author: Cameron M. Gattis
+    # Created: 2026-06-13
+    # Updated: New.
+    # Purpose: Aggregates multiple activation functions using
+    #          weighted summation.
+    # ##################################################################
 
-    def __init__(
-            self,
-            methods
-    ):
+    def __init__(self,methods):
+        '''
+            Initializes activation ensemble.
 
+            @params methods : list
+                List of tuples:
+
+                    (activation, weight)
+        '''
         self.methods = methods
+        self.output = None
+        self.output = None
 
+    def forward(self,x):
+        '''
+            Computes weighted activation output.
 
-    def forward(
-            self,
-            x
-    ):
+            @params x : numpy array
 
-        output = 0
-
+            @return output : numpy array
+        '''
+        output = np.zeros_like(x)
         for method, weight in self.methods:
-
-            output += (
-
-                weight *
-                method.forward(
-                    x
-                )
-
-            )
+            output += (weight * method.forward(x))
+        self.output = output
 
         return output
 
+    def backward(self,grad):
+        '''
+            Computes weighted gradient contribution
+            from all activation functions.
 
-    def backward(
-            self,
-            x,
-            grad
-    ):
+            @params grad : numpy array
 
-        total = 0
-
+            @return grad_output : numpy array
+        '''
+        total = np.zeros_like(x)
         for method, weight in self.methods:
-
-            total += (
-
-                weight *
-                method.backward(
-                    x,
-                    grad
-                )
-
-            )
+            total += (weight * method.backward(grad))
 
         return total
