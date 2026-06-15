@@ -18,7 +18,7 @@ ARROW_SIGNIFICANT_DOWN = "⇊"
 ARROW_UNRELATED = "⇎"
 ARROW_MAPS = "↦"
 
-def z_to_arrow(z):
+def z_to_arrow(z,minor_cutoff=0.5,major_cutoff=2.0):
     '''
         Converts z-score values into
         interpretability arrows.
@@ -28,19 +28,19 @@ def z_to_arrow(z):
         @return arrow : str
     '''
     # Significant positive deviation
-    if z > 2:
+    if z > major_cutoff:
         return (ARROW_SIGNIFICANT_UP)
 
     # Moderate positive deviation
-    elif z > 0.5:
+    elif z > minor_cutoff:
         return (ARROW_UP)
 
     # Significant negative deviation
-    elif z < -2:
+    elif z < -major_cutoff:
         return (ARROW_SIGNIFICANT_DOWN)
 
     # Moderate negative deviation
-    elif z < -0.5:
+    elif z < -minor_cutoff:
         return (ARROW_DOWN)
 
     # Near expected value

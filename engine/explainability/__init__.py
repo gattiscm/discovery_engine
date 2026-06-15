@@ -23,7 +23,7 @@ from .attribution import (
     compute_group_contributions
 )
 
-from .latent_map import (
+from .latent_mapping import (
     build_latent_map
 )
 

@@ -49,6 +49,8 @@ class DiscoveryModel:
             use_encoder=False,
             encoder_type="tabular",
             encoder_kwargs=None,
+            minor_cutoff=0.5,
+            major_cutoff=2.0
     ):
         '''
             Initializes DiscoveryModel.
@@ -89,11 +91,8 @@ class DiscoveryModel:
         self.mode = "parallel"
         self.merge = "concat"
         self.novel_memory = None
-
         self.feature_space = FeatureSpace()
-
         self.memory = CategoryMemory()
-
         self.activation = activation
         self.novelty = novelty
         self.optimizer = optimizer
@@ -101,14 +100,16 @@ class DiscoveryModel:
         self.encoder_type = encoder_type
         self.encoder_kwargs = encoder_kwargs or {}
         self.is_fit = False
-
+        self.minor_cutoff = minor_cutoff
+        self.major_cutoff = major_cutoff
         self.feature_names = None
         self.latent_map = None
-
         self.extractor = None
         self.novelty_mode = novelty_mode
-
         self.novelty_threshold = novelty_threshold
+
+        if major_cutoff <= minor_cutoff:
+            raise ValueError("major_cutoff must be greater than minor_cutoff.")
 
     def _score_latent(self, z):
         scores = {}
@@ -558,7 +559,7 @@ class DiscoveryModel:
                 "contributors": contributors,
                 "delta": float(raw_delta),
                 "z_score": float(z_score),
-                "arrow": z_to_arrow(z_score),
+                "arrow": z_to_arrow(z_score,minor_cutoff=self.minor_cutoff,major_cutoff=self.major_cutoff),
                 "importance": abs(z_score)
             })
 

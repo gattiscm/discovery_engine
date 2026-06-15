@@ -47,7 +47,7 @@ class GroupedActivation(BaseActivation):
 
             @return output : numpy array
         '''
-        output = np.zeros_like(x
+        output = np.zeros_like(x)
         for group, activation in zip(self.groups,self.activations):
             output[:, group] = (activation.forward(x[:, group] ))
 
@@ -64,7 +64,7 @@ class GroupedActivation(BaseActivation):
         '''
         output = np.zeros_like(grad)
 
-        for group, activation in zip(elf.groups,self.activations):
+        for group, activation in zip(self.groups,self.activations):
             output[:, group] = (activation.backward(grad[:, group]))
 
         return output

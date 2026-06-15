@@ -58,6 +58,17 @@ class DiscoveryReport:
         self.decreases = []
         self._categorize()
 
+    def __repr__(self):
+        return (
+            f"DiscoveryReport("
+            f"category={self.category}, "
+            f"samples={self.sample_count}, "
+            f"novelty_rate={self.novelty_rate:.4f})"
+        )
+
+    def __str__(self):
+        return self.__repr__()
+
     def _categorize(self):
         '''
             Categorizes data as increase or decrease based on text.
