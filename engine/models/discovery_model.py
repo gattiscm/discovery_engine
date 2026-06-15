@@ -107,6 +107,9 @@ class DiscoveryModel:
         self.extractor = None
         self.novelty_mode = novelty_mode
         self.novelty_threshold = novelty_threshold
+        self.history = {
+            "loss": []
+        }
 
         if major_cutoff <= minor_cutoff:
             raise ValueError("major_cutoff must be greater than minor_cutoff.")
@@ -378,6 +381,7 @@ class DiscoveryModel:
             target = np.eye(len(classes))[y_encoded]
 
             loss = np.mean((Z[:,:target.shape[1]] - target) ** 2)
+            self.history["loss"].append(float(loss))
             grad_small = (2 * (Z[:,:target.shape[1]] - target) / len(X_processed))
             grad = np.zeros_like(Z)
             grad[:,:target.shape[1]] = grad_small
@@ -385,8 +389,7 @@ class DiscoveryModel:
             for layer in reversed(self.layers):
                 grad = layer.backward(grad)
 
-            if epoch % 2 == 0:
-                print(f"Epoch {epoch} Loss: {loss:.4f}")
+            print(f"Epoch {epoch + 1} of {epochs} - loss: {loss:.4f}")
 
         Z = (self._forward_layers(X_processed))
         self.memory.fit(Z,y)
@@ -772,3 +775,64 @@ class DiscoveryModel:
                     print(f"  {name}: {value:.3f}")
 
             print()
+
+    def plot_history(self):
+        '''
+            Plots training history.
+
+            @params None
+
+            @return None
+        '''
+
+        import matplotlib.pyplot as plt
+
+        if len(self.history["loss"]) == 0:
+            raise ValueError("No training history available.")
+
+        plt.figure(figsize=(8, 5))
+        plt.plot(self.history["loss"])
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.title("Training Loss")
+
+        plt.grid(True)
+
+        plt.show()
+
+    def summary(self):
+
+        print()
+        print("=" * 70)
+        print("DiscoveryModel Summary")
+        print("=" * 70)
+        print()
+        print(f"{'Layer':<25}{'Output Shape':<20}")
+        print("-" * 70)
+        for layer in self.layers:
+            name = (layer.__class__.__name__)
+
+        outputs = getattr(layer,"outputs","?")
+        print(f"{name:<25}{str(outputs):<20}")
+        total_params = 0
+
+        for layer in self.layers:
+            if hasattr(layer, "W"):
+                total_params += (layer.W.size)
+
+            if hasattr(layer, "b"):
+                total_params += (layer.b.size)
+        print()
+        print("-" * 70)
+
+        print(f"Total Parameters: "
+              f"{total_params:,}"
+              )
+
+        print(f"Known Categories: {len(self.memory.categories())}")
+        print(f"Novelty Threshold: {self.novelty_threshold}")
+        print(f"Novelty Cutoff: {self.novelty_cutoff_:.4f}")
+        print( f"Minor Cutoff: {self.minor_cutoff}")
+        print(f"Major Cutoff: {self.major_cutoff}")
+        if len(self.history["loss"]) > 0:
+            print(f"Final Loss: {self.history['loss'][-1]:.4f}")
